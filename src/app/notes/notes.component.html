@@ -1,1 +1,57 @@
-<p>notes works!</p>
+<header>
+    <h1>Keep Notes</h1>
+    <button mat-flat-button (click)="newNoteBtnClicked = true;noteAdded=true;">Create new <mat-icon>note_add</mat-icon></button>
+</header>
+<div class="new-note" *ngIf="newNoteBtnClicked">
+    <div class="new-note-header">
+        <button mat-icon-button (click)="newNoteBtnClicked = false;">
+            <mat-icon>close</mat-icon>
+        </button>
+        <h3>New Note</h3>
+    </div>
+
+    <form [formGroup]="newNoteForm">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Title</mat-label>
+            <input type="text" matInput formControlName="title" name="title">
+            <mat-error>
+                Please enter the title.
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Content</mat-label>
+            <textarea type="text" matInput formControlName="content" name="content"></textarea>
+            <mat-error>
+                Please enter the content.
+            </mat-error>
+        </mat-form-field>
+        <div class="form-cta">
+        <button mat-button mat-raised-button color="primary" (click)="createNote()">Add</button>
+        <mat-progress-spinner *ngIf="!noteAdded" class="spinner" color="accent" mode="indeterminate" diameter="20">
+        </mat-progress-spinner>
+        </div>
+    </form>
+</div>
+<hr *ngIf="notesArray.length > 0">
+<div class="notes">
+    <h3>All notes ({{notesArray.length}})</h3>
+    <div class="notes-item" *ngFor="let note of notesArray;let i=index">
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{note.title}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <span class="desc">Created at {{note.time | date : 'dd/MM/YY hh:mm:ss a'}} </span> 
+                        <button
+                            mat-icon-button color="warn" (click)="deleteNote(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>{{note.content}}</p>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+</div>
