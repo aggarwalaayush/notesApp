@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Note } from '../note';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { EditNoteComponent } from '../edit-note/edit-note.component';
 
 @Component({
   selector: 'app-notes',
@@ -21,12 +23,14 @@ export class NotesComponent implements OnInit {
   defaultNote: Note = {
     title: "Default",
     content: "This is a sample note",
-    time: new Date().toISOString()
+    time: new Date().toISOString(),
+    modified:false
   };
+  eNote!: Note;
 
-  constructor(private toastr: ToastrService) { }
+
+  constructor(private toastr: ToastrService, public dialog: MatDialog) { }
   ngOnInit(): void {
-    console.log(typeof(JSON.parse(JSON.stringify(window.localStorage.getItem("notes-array")))))
     if(window.localStorage.getItem("notes-array")!=null){
       let localArray = JSON.parse(JSON.stringify(window.localStorage.getItem("notes-array")));
       this.notesArray = JSON.parse(localArray);
@@ -43,7 +47,8 @@ export class NotesComponent implements OnInit {
       const newNote: Note = {
         title: this.newNoteForm.controls['title'].value,
         content: this.newNoteForm.controls['content'].value,
-        time: new Date().toISOString()
+        time: new Date().toISOString(),
+        modified:false
       }
       setTimeout(()=>{
         this.noteAdded = true;
@@ -61,5 +66,23 @@ export class NotesComponent implements OnInit {
     this.toastr.success("Note has been deleted successfully","Note Deleted",{ positionClass: 'toast-bottom-center'} );
 
     window.localStorage.setItem("notes-array",JSON.stringify(this.notesArray));
+  }
+  editNote(i:number){
+    window.localStorage.removeItem("notes-array");
+    this.eNote = this.notesArray[i];
+    let temp = this.eNote;
+    const dialogRef = this.dialog.open(EditNoteComponent,{
+      data:this.eNote
+    })
+    dialogRef.afterClosed().subscribe(res =>{
+      if(res)
+      {
+        this.notesArray[i] = res;
+      }
+      else{
+        this.notesArray[i] = temp;
+      }
+      window.localStorage.setItem("notes-array",JSON.stringify(this.notesArray));
+    })
   }
 }

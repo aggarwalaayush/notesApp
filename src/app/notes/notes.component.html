@@ -43,7 +43,18 @@
                         {{note.title}}
                     </mat-panel-title>
                     <mat-panel-description>
-                        <span class="desc">Created at {{note.time | date : 'dd/MM/YY hh:mm:ss a'}} </span> 
+                        <span class="desc">
+                            <span *ngIf="!note.modified">
+                            Created at 
+                            </span>
+                            <span *ngIf="note.modified">
+                                Modified at 
+                                </span>
+                            {{note.time | date : 'dd/MM/YY hh:mm:ss a'}}
+                         </span> 
+                        <button mat-icon-button color="primary" (click)="editNote(i)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
                         <button
                             mat-icon-button color="warn" (click)="deleteNote(i)">
                             <mat-icon>delete</mat-icon>

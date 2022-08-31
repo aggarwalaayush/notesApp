@@ -6,11 +6,13 @@ import { MaterialModule } from './material/material.module';
 import { NotesComponent } from './notes/notes.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { EditNoteComponent } from './edit-note/edit-note.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotesComponent
+    NotesComponent,
+    EditNoteComponent
   ],
   imports: [
     BrowserModule,
