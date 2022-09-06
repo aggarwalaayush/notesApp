@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Note } from '../note';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { EditNoteComponent } from '../edit-note/edit-note.component';
+import { MatAccordion } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-notes',
@@ -11,6 +12,7 @@ import { EditNoteComponent } from '../edit-note/edit-note.component';
   styleUrls: ['./notes.component.scss']
 })
 export class NotesComponent implements OnInit {
+  @ViewChildren(MatAccordion) accordion!: QueryList<MatAccordion>;
   newNoteForm: FormGroup = new FormGroup(
     {
       title: new FormControl('',Validators.required),
@@ -27,7 +29,8 @@ export class NotesComponent implements OnInit {
     modified:false
   };
   eNote!: Note;
-
+  gridView:boolean = false;
+  allExpanded:boolean = false;
 
   constructor(private toastr: ToastrService, public dialog: MatDialog) { }
   ngOnInit(): void {
@@ -39,7 +42,22 @@ export class NotesComponent implements OnInit {
     this.notesArray.push(this.defaultNote);
     }
   }
-
+  ngAfterViewInit(){
+    let el =document.querySelectorAll('accordion')
+    console.log(this.accordion,"el",el)
+  }
+  expandAll(){
+    this.accordion.forEach((item)=>{
+      item.openAll();
+    });
+    this.allExpanded = true;
+  }
+  collapseAll(){
+    this.accordion.forEach((item)=>{
+      item.closeAll();
+    });
+    this.allExpanded = false;
+  }
   createNote() {
     if (this.newNoteForm.valid) {
       window.localStorage.clear()
@@ -84,5 +102,8 @@ export class NotesComponent implements OnInit {
       }
       window.localStorage.setItem("notes-array",JSON.stringify(this.notesArray));
     })
+  }
+  changeView(){
+    this.gridView = !this.gridView;
   }
 }
